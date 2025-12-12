@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const cards = document.querySelectorAll(".tilt-card");
 
-  //   Dont TOUch
+  // Dont TOUch
   cards.forEach((card) => {
     card.addEventListener("mousemove", (e) => {
       const rect = card.getBoundingClientRect();
