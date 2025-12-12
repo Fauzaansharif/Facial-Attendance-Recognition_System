@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Facial Attendance | Rizvi College Of Engineering</title>
+    <link
+      rel="icon"
+      href="{{ url_for('static', filename='logo.png') }}?v=4"
+      type="image/png"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div id="intro-overlay">
+      <h2 class="intro-text">
+        This is the admin page, shown to demonstrate project capabilities
+      </h2>
+      <div class="intro-bar"><div class="intro-progress"></div></div>
+    </div>
+
+    <div id="loading-overlay" class="hidden">
+      <div class="spinner"></div>
+      <h2 style="color: white; letter-spacing: 2px">SYSTEM INITIALIZING</h2>
+      <p style="color: var(--primary); margin-top: 10px" class="blink">
+        Connecting to Camera Module...
+      </p>
+    </div>
+
+    <header class="main-header">
+      <div class="container header-content">
+        <div class="brand">
+          <div class="logo-wrapper">
+            <img
+              src="{{ url_for('static', filename='logo.png') }}"
+              alt="Rizvi Logo"
+              class="logo-img"
+            />
+          </div>
+          <div class="brand-text">
+            <h1>Rizvi College of Engineering</h1>
+            <p>Dept. of Electronics & Computer Science</p>
+          </div>
+        </div>
+
+        <div class="user-widget">
+          <div class="greeting" id="greeting">Welcome</div>
+          <div id="time">00:00:00</div>
+          <div id="date" style="font-size: 0.8rem; opacity: 0.7">
+            Loading Date...
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      {% if mess %}
+      <div
+        style="
+          background: rgba(16, 185, 129, 0.1);
+          border: 1px solid #10b981;
+          color: #10b981;
+          padding: 15px;
+          border-radius: 12px;
+          margin: 30px 0;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        "
+      >
+        <span class="material-icons-outlined">info</span>
+        <span>{{ mess }}</span>
+      </div>
+      {% endif %}
+
+      <div class="dashboard-grid">
+        <aside class="sidebar">
+          <div class="card stats-card tilt-card fade-in delay-1">
+            <div class="stats-number">{{ totalreg }}</div>
+            <div class="stats-label">Registered Students</div>
+          </div>
+
+          <div class="card tilt-card fade-in delay-2">
+            <div class="card-header">
+              <div class="icon-box">
+                <span class="material-icons-outlined">videocam</span>
+              </div>
+              <h2>Attendance</h2>
+            </div>
+            <p style="color: #94a3b8; margin-bottom: 25px; font-size: 0.9rem">
+              Start the facial recognition engine to mark student presence.
+            </p>
+            <a href="/start" onclick="showLoader()" class="btn btn-primary">
+              Launch Camera
+            </a>
+          </div>
+
+          <div class="card tilt-card fade-in delay-3">
+            <div class="card-header">
+              <div
+                class="icon-box"
+                style="
+                  color: var(--accent);
+                  background: rgba(255, 215, 0, 0.15);
+                "
+              >
+                <span class="material-icons-outlined">person_add</span>
+              </div>
+              <h2>New Entry</h2>
+            </div>
+            <form
+              action="/add"
+              method="POST"
+              enctype="multipart/form-data"
+              onsubmit="showLoader()"
+            >
+              <div class="input-group">
+                <input
+                  type="text"
+                  name="newusername"
+                  id="u_name"
+                  required
+                  autocomplete="off"
+                />
+                <label for="u_name">Full Name</label>
+              </div>
+              <div class="input-group">
+                <input
+                  type="number"
+                  name="newuserid"
+                  id="u_id"
+                  required
+                  autocomplete="off"
+                />
+                <label for="u_id">Roll ID</label>
+              </div>
+              <button type="submit" class="btn btn-secondary">
+                Capture & Train
+              </button>
+            </form>
+          </div>
+        </aside>
+
+        <section class="content-area fade-in delay-4">
+          <div class="card tilt-card h-100">
+            <div class="card-header" style="justify-content: space-between">
+              <div style="display: flex; gap: 15px; align-items: center">
+                <div class="icon-box">
+                  <span class="material-icons-outlined">history</span>
+                </div>
+                <h2>Attendance Logs</h2>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <span
+                  style="
+                    height: 8px;
+                    width: 8px;
+                    background: #10b981;
+                    border-radius: 50%;
+                    box-shadow: 0 0 10px #10b981;
+                  "
+                ></span>
+                <span
+                  style="font-size: 0.8rem; color: #10b981; font-weight: 700"
+                  >LIVE</span
+                >
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table class="styled-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Student Profile</th>
+                    <th>Roll ID</th>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% if l %} {% for i in range(l) %}
+                  <tr class="table-row">
+                    <td style="color: #64748b">{{ i+1 }}</td>
+                    <td>
+                      <div class="user-info">
+                        <div class="avatar">{{ names[i][0] }}</div>
+                        <span style="font-weight: 600">{{ names[i] }}</span>
+                      </div>
+                    </td>
+                    <td><span class="roll-badge">{{ rolls[i] }}</span></td>
+                    <td style="color: var(--primary)">{{ times[i] }}</td>
+                    <td>
+                      <span style="color: #10b981; font-weight: 600"
+                        >PRESENT</span
+                      >
+                    </td>
+                  </tr>
+                  {% endfor %} {% else %}
+                  <tr>
+                    <td
+                      colspan="5"
+                      style="text-align: center; padding: 60px; color: #475569"
+                    >
+                      <span
+                        class="material-icons-outlined"
+                        style="
+                          font-size: 48px;
+                          opacity: 0.5;
+                          margin-bottom: 15px;
+                          display: block;
+                        "
+                        >grid_off</span
+                      >
+                      No attendance records found for today.
+                    </td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Rizvi College of Engineering</p>
+      <p style="margin-top: 10px">
+        Built by <span class="credits">Fauzaan, Hasan, Rehan and Saad</span>
+      </p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
