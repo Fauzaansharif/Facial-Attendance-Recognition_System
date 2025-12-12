@@ -95,16 +95,16 @@ def getallusers():
 
 
 @app.route('/')
-def home():
+def index():
     names, rolls, times, l = extract_attendance()
-    return render_template('home.html', names=names, rolls=rolls, times=times, l=l, totalreg=totalreg(), datetoday2=datetoday2)
+    return render_template('index.html', names=names, rolls=rolls, times=times, l=l, totalreg=totalreg(), datetoday2=datetoday2)
 
 @app.route('/start', methods=['GET'])
 def start():
     names, rolls, times, l = extract_attendance()
 
     if 'face_recognition_model.pkl' not in os.listdir('static'):
-        return render_template('home.html', names=names, rolls=rolls, times=times, l=l, totalreg=totalreg(), datetoday2=datetoday2, mess='There is no trained model in the static folder. Please add a new face to continue.')
+        return render_template('index.html', names=names, rolls=rolls, times=times, l=l, totalreg=totalreg(), datetoday2=datetoday2, mess='There is no trained model in the static folder. Please add a new face to continue.')
 
     ret = True
     cap = cv2.VideoCapture(0)
@@ -129,7 +129,7 @@ def start():
     cap.release()
     cv2.destroyAllWindows()
     names, rolls, times, l = extract_attendance()
-    return render_template('home.html', names=names, rolls=rolls, times=times, l=l, totalreg=totalreg(), datetoday2=datetoday2)
+    return render_template('index.html', names=names, rolls=rolls, times=times, l=l, totalreg=totalreg(), datetoday2=datetoday2)
 
 
 
@@ -164,7 +164,7 @@ def add():
     print('Training Model')
     train_model()
     names, rolls, times, l = extract_attendance()
-    return render_template('home.html', names=names, rolls=rolls, times=times, l=l, totalreg=totalreg(), datetoday2=datetoday2)
+    return render_template('index.html', names=names, rolls=rolls, times=times, l=l, totalreg=totalreg(), datetoday2=datetoday2)
 
 if __name__ == '__main__':
     app.run(debug=True)
